@@ -91,7 +91,7 @@
                 .temperature_details{
                     color: #34495e;
                     text-align: center;
-                    font-size: 10em;
+                    font-size: 100px;
                     font-family: 'Fjalla One', sans-serif;
                 }
                 .other_info{
@@ -106,7 +106,7 @@
                     float: left;
                 }
                 .height_daily_details{
-                    height: 20% !important;
+                    height: 8% !important;
                 }
                 .daily>div{
                     width: 14.28%;

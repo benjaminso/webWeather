@@ -36,7 +36,7 @@
                 var arrDaily=[];
                 var arrDailyData=[];
 
-                //converting time to readable time
+                //converting time to readable time - copied from stackoverflow- but i am trying to get idea from this. Leave it in here in case i need, but do not use for this project
                 function convertingDate(date_time){
                     // multiplied by 1000 so that the argument is in milliseconds, not seconds.
                     var date = new Date(date_time*1000);
@@ -50,14 +50,27 @@
                     var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
                     return formattedTime;
                 }
-
+                // all methods are found in W3cSchool
                 function convertingWeekDate(date_time){
-                  var date = new Date(date_time*1000);
-                  // Hours part from the timestamp
-                  var dates = date.getDay();
+                    // date_time=1528660800;
+                    var date = new Date(date_time*1000);
+                    // Hours part from the timestamp
+                    var dates = date.getDay();
+                    console.log(date.getHours());
+                    var dayInWeek=["Sun","Mon","Tues","Wed","Thurs","Fri","Sat"];
+                    return dayInWeek[dates];
+                }
 
-                  var dayInWeek=["Sun","Mon","Tues","Wed","Thurs","Fri","Sat"];
-                  return dayInWeek[dates];
+                function convertingTo12Hours(hourly_time){
+                    var date = new Date(hourly_time*1000);
+                    var options = {
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true
+                    };
+                    var timeString = date.toLocaleString('en-US', options);
+                    return timeString;
+                    //console.log(timeString);
                 }
 
 
@@ -117,6 +130,8 @@
                             //after getting extract all data from JSON. I start place it into the places where they should be
                             pushingData();
                             dailyAssigned();
+                            loadFirstHours();
+                            convertingTo12Hours(arrHourlyData[0].time);
                         }
                     }
                     request.send();
@@ -133,8 +148,8 @@
                   //$("#curr_icon").text(arrCurrently[2]);
                   //var imgText= "<img src=PNG/"+arrCurrently[2]+".png alt=\"clear day\"+>";
                   $("#curr_icon").prepend($("<img>",{src: "PNG/"+arrCurrently[2]+".png", alt:"asd"}));
-                  $("#curr_lettter").text(arrCurrently[1]);
-                  $("#curr_wind").text("Wind:" + arrCurrently[12]);
+                  $("#curr_lettter").text("Precipitation: "+arrCurrently[5]);
+                  $("#curr_wind").text("Wind:" + arrCurrently[12]+" mph");
                   //weather, tempmax, tempmin, icon
                 }
 
@@ -142,8 +157,15 @@
                     var days= $("#listingDays");
                     for(var i=0;i<7;i++){
                         var container= $("<div>").addClass("p-2").appendTo(days);
-                        var weekDay = $("<p></p>").text("WD");
-                        var icon = $("<p></p>").prepend($("<img>",{src: "PNG/"+arrCurrently[2]+".png", alt:"asd"}));
+                       // var weekDay = $("<p></p>").text("WD");
+                        var temp = $("<p></p>").text(convertingWeekDate(arrDailyData[i].time));
+                        var icon = $("<p></p>").prepend($("<img>",{src: "PNG/"+arrDailyData[i].icon+".png", alt:"weather_icon"}));
+                        
+                        //append to p-2
+                        temp.appendTo(container);
+                        icon.appendTo(container);
+                        // append to listingDays
+                        container.appendTo(days);
                     }
                 }
 
@@ -206,7 +228,8 @@
                 arrHourly.push(JsonObject.hourly.icon);
                // console.log(JsonObject.hourly.data);
                 for(var i=0;i<JsonObject.hourly.data.length;i++){
-                    arrHourlyData.push(new HourlyData(JsonObject.hourly.data[i].time,
+                    arrHourlyData.push(new HourlyData(
+                    JsonObject.hourly.data[i].time,
                     JsonObject.hourly.data[i].summary,
                     JsonObject.hourly.data[i].icon,
                     JsonObject.hourly.data[i].precipIntensity,
@@ -320,22 +343,46 @@
             <!-- ending content -->
             <!-- hours details -->
             <div class="other_info container-fluid">
-                <div class="d-flex flex-row flex-wrap">
+                <div class="d-flex flex-row flex-wrap" id="first-hours">
+                    <script>
+                        function loadFirstHours(){
+                            var main = $("#first-hours");
+                            for(var i=0;i<6;i++){
+                                var container = $("<div></div>").addClass("p-2");
+                                var hourly = $("<p></p>").text(convertingTo12Hours(arrHourlyData[i].time));
+                                var temp = $("<p></p>").text((arrHourlyData[i].temperature));
+
+                                hourly.appendTo(container);
+                                temp.appendTo(container);
+
+                                container.appendTo(main);
+                            }
+                        }
+                    </script>
+                    <!-- this part will be in Javascript -->
+
+                    <!-- <div class="p-2 size-p2">asd</div>
                     <div class="p-2 size-p2">asd</div>
                     <div class="p-2 size-p2">asd</div>
                     <div class="p-2 size-p2">asd</div>
                     <div class="p-2 size-p2">asd</div>
-                    <div class="p-2 size-p2">asd</div>
-                    <div class="p-2 size-p2">asd</div>
+                    <div class="p-2 size-p2">asd</div> -->
 
                 </div>
-                <div class="d-flex flex-row flex-wrap">
+                <div class="d-flex flex-row flex-wrap" id="second-hours">
+                    <!-- This part will be in Javascript -->
+                    <script>
+                        function loadSecondHours(){
+
+                        }
+                    </script>
+
+                    <!-- <div class="p-2 size-p2">asd</div>
                     <div class="p-2 size-p2">asd</div>
                     <div class="p-2 size-p2">asd</div>
                     <div class="p-2 size-p2">asd</div>
                     <div class="p-2 size-p2">asd</div>
-                    <div class="p-2 size-p2">asd</div>
-                    <div class="p-2 size-p2">asd</div>
+                    <div class="p-2 size-p2">asd</div> -->
                 </div>
             </div>
             <!-- ending hours details -->
@@ -343,13 +390,14 @@
             <!-- 7 days -->
             <div class="container-fluid">
                 <div class="d-flex flex-row flex-wrap daily" id="listingDays">
-                    <div class="p-2">
+                    <!-- this part is generated by javascript -->
+                     <!-- <div class="p-2">
                         <p>Day 1</p>
                         <p><img src="PNG/clear-day.png" alt="clear day"></p>
                         <p>Temperature</p>
                     </div>
 
-                    <!-- <div class="p-2">Day 2</div>
+                    <div class="p-2">Day 2</div>
                     <div class="p-2">Day 3</div>
                     <div class="p-2">Day 4</div>
                     <div class="p-2">Day 5</div>
