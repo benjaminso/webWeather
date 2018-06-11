@@ -2,9 +2,15 @@
 
     <head>
             <meta charset="utf-8">
+            <!-- jquery must load before anything -->
+             <!-- JQuery -->
+             <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+             <!-- Ending JQuery --> 
+            <!-- loading bootstrap -->
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
             <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
+            <!-- ending loading bootstrap -->
+           
             <!-- google font-style -->
                 <link href="https://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet">
             <!-- ending font-style -->
@@ -15,9 +21,7 @@
                 <script src="parsingObject/ObjectParsingDaily.js"></script>
             <!-- ending loading -->
 
-            <!-- JQuery -->
-                <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-            <!-- Ending JQuery -->
+           
             <title> Testing Weather</title>
             <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
             <!-- call style -->
@@ -119,8 +123,8 @@
                 //pushing long and lat to the URL of darksky
                 function printOut(jsondata){
                     //getting long and lat
-                    console.log(jsondata.results[0].locations[0].adminArea1);
-                    if((jsondata.info.statuscode==0) && (jsondata.results[0].locations[0].adminArea1=="US")){
+                    //console.log(jsondata.results[0].locations[0].length);
+                    if((jsondata.info.statuscode==0) && (jsondata.results[0].locations[0].adminArea1=="US")&&(jsondata.results[0].locations.length==1)){
                         longtitude = jsondata.results[0].locations[0].displayLatLng.lat;
                         latitude = jsondata.results[0].locations[0].displayLatLng.lng;
                         stateInfor = jsondata.results[0].providedLocation.location;
