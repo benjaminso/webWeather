@@ -58,6 +58,18 @@
                     padding: 10px;
                     width: 100%;
                 }
+                .center-block{
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    width: 100%;
+                }
+                #cityName, #stateName{
+                    width: 100% !important;
+                }
+                .color_main{
+                    height: 300px !important;
+                }
 
                 .back-button{
                     background-color: #ecf0f1;
@@ -97,6 +109,12 @@
                 .other_info{
                     background-color: #bdc3c7;
                     width: 100% !important;
+                    padding: auto;
+                    margin: auto;
+                }
+                #first-hours{
+                    padding: auto !important;
+                    margin: auto !important;
                 }
                 .size-p2{
                     width: 16.66%;
@@ -106,7 +124,7 @@
                     float: left;
                 }
                 .height_daily_details{
-                    height: 8% !important;
+                    height: 100px;
                 }
                 .daily>div{
                     width: 14.28%;

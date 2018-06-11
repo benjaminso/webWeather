@@ -1,3 +1,4 @@
+
 <html>
 
     <head>
@@ -36,22 +37,6 @@
                 var arrDaily=[];
                 var arrDailyData=[];
 
-                var stateInfor="";
-
-                function clearData(){
-                   arrCurrently.length=0;
-                   arrMinutely.length=0;
-                   arrMinutelyData.length=0;
-
-                   arrHourly.length=0;
-                   arrHourlyData.length=0;
-
-                   arrDaily.length=0;
-                   arrDailyData.length=0;
-
-                   stateInfor="";
-                }
-
                 //converting time to readable time - copied from stackoverflow- but i am trying to get idea from this. Leave it in here in case i need, but do not use for this project
                 function convertingDate(date_time){
                     // multiplied by 1000 so that the argument is in milliseconds, not seconds.
@@ -72,6 +57,7 @@
                     var date = new Date(date_time*1000);
                     // Hours part from the timestamp
                     var dates = date.getDay();
+                    //console.log(date.getHours());
                     var dayInWeek=["Sun","Mon","Tues","Wed","Thurs","Fri","Sat"];
                     return dayInWeek[dates];
                 }
@@ -85,20 +71,18 @@
                     };
                     var timeString = date.toLocaleString('en-US', options);
                     return timeString;
+                    //console.log(timeString);
                 }
 
 
                 function buttonSearch(){
-                    // clearData();
                     var cityName=/*"Annandale";*/$("#cityName").val();
                     var stateName = /*"VA"; */$("#stateName").val();
                     if(cityName !='' && stateName !=''){
+                        // make a validation for statename
                         //assume the state and city is right. let go inside to finish forcasting
+                        alert("good condition");
                         var requestURL = "https://www.mapquestapi.com/geocoding/v1/address?key=GGAloS9UZU8i7fwiPPuR96hsg1f5syyF&inFormat=kvp&outFormat=json&location="+cityName+"+"+stateName+"&thumbMaps=false" ;
-                        $("#cityName").val("");
-                        $("#cityName").attr("placeholder","Enter City Name");
-                        $("#stateName").val("");
-                        $("#stateName").attr("placeholder","Enter State Name");
                         getwithAsyn(requestURL);
                     }else{
                         alert("please enter information!!");
@@ -111,28 +95,23 @@
                     //alert(requestURL);
                     try{
                         const data = await fetch(requestURL);
+                        //const jsondata=await data.json();
                         printOut(await data.json());
                     }catch(e){
-                        console.log(e,"fail");
+                       // console.log(e,"fail");
                     }
                 }
                 //pushing long and lat to the URL of darksky
                 function printOut(jsondata){
+                    //console.log(jsondata);
                     //getting long and lat
-                    console.log(jsondata.results[0].locations[0].adminArea1);
-                    if((jsondata.info.statuscode==0) && (jsondata.results[0].locations[0].adminArea1=="US")){
-                        longtitude = jsondata.results[0].locations[0].displayLatLng.lat;
-                        latitude = jsondata.results[0].locations[0].displayLatLng.lng;
-                        stateInfor = jsondata.results[0].providedLocation.location;
-                        console.log(stateInfor);
-                        var requestURL2 = "https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/5fb5fcf58be45931de76fa82a184518f/"+longtitude+","+latitude;
-                    // console.log(requestURL2);// checking request
-                        XMLrequest(requestURL2);
-                    }else{
-                        alert("Wrong information");
-                        this.location.reload(true);
-                    }
-                   
+                    longtitude = jsondata.results[0].locations[0].displayLatLng.lat;
+                    latitude = jsondata.results[0].locations[0].displayLatLng.lng;
+                    alert(longtitude +"  "+latitude);
+
+                    var requestURL2 = "https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/5fb5fcf58be45931de76fa82a184518f/"+longtitude+","+latitude;
+                   // console.log(requestURL2);// checking request
+                    XMLrequest(requestURL2);
                 }
                 //pushing data from json into objects
                 function XMLrequest(link) {
@@ -146,21 +125,62 @@
                             //getting minutely and data and push into an array
                             //getMinutely(objSon);
                             //getting value of an attribute in an element
+                            //console.log(arrMinutelyData[0].precipIntensity);
+                            //console.log(arrCurrently[0]);
                             getHourly(objSon);
+                            //console.log(arrHourlyData[0]);
                             getDaily(objSon);
                             //after getting extract all data from JSON. I start place it into the places where they should be
                             pushingData();
-                           
-                            //convertingTo12Hours(arrHourlyData[0].time);
+                            dailyAssigned();
+                            loadFirstHours();
+                            convertingTo12Hours(arrHourlyData[0].time);
                         }
                     }
                     request.send();
                 }
+                function pushingData(){
+                 // console.log(arrCurrently[7]);
+                  contentAssigned();
+                }
+                function contentAssigned(){
+                  //current temperature
+                  //<img src="PNG/clear-day.png" alt="clear day">
+                  $("#dateTime").text(convertingWeekDate(arrCurrently[0]));
+                  $("#current_temp").text(arrCurrently[7]);
+                  //$("#curr_icon").text(arrCurrently[2]);
+                  //var imgText= "<img src=PNG/"+arrCurrently[2]+".png alt=\"clear day\"+>";
+                  $("#curr_icon").prepend($("<img>",{src: "PNG/"+arrCurrently[2]+".png", alt:"asd"}));
+                  $("#curr_lettter").text("Precipitation:\n"+arrCurrently[5]);
+                  $("#curr_wind").text("Wind:\n" + arrCurrently[12]+" mph");
+                  //weather, tempmax, tempmin, icon
+                }
 
+                function dailyAssigned(){
+                    var days= $("#listingDays");
+                    for(var i=0;i<7;i++){
+                        var container= $("<div>").addClass("p-2").appendTo(days);
+                       // var weekDay = $("<p></p>").text("WD");
+                        var temp = $("<p></p>").text(convertingWeekDate(arrDailyData[i].time));
+                        var icon = $("<p></p>").prepend($("<img>",{src: "PNG/"+arrDailyData[i].icon+".png", alt:"weather_icon"}));
+                        
+                        //append to p-2
+                        temp.appendTo(container);
+                        icon.appendTo(container);
+                        // append to listingDays
+                        container.appendTo(days);
+                    }
+                }
+
+                // <div class="p-2">
+                //         <p>Day 1</p>
+                //         <p><img src="PNG/clear-day.png" alt="clear day"></p>
+                //         <p>Temperature</p>
+                //     </div>
 
                 function getDaily(JsonObject){
-                    arrDaily.push(JsonObject.daily.icon);
-                    arrDaily.push(JsonObject.daily.summary);
+                arrDaily.push(JsonObject.daily.icon);
+                arrDaily.push(JsonObject.daily.summary);
                 for(var i=0;i<JsonObject.daily.data.length;i++){
 
                     arrDailyData.push(new DailyData(JsonObject.daily.data[i].time,
@@ -203,6 +223,7 @@
                                                     JsonObject.daily.data[i].apparentTemperatureMax,
                                                     JsonObject.daily.data[i].apparentTemperatureMaxTime,
                                                 ));
+                    //console.log(arrDailyData[0]);
                 }
             }
             function getHourly(JsonObject){
@@ -232,13 +253,18 @@
             }
 
             function getMinutely(JsonObject){
+                //console.log(JsonObject);
                 arrMinutely.push(JsonObject.minutely.summary);
                 arrMinutely.push(JsonObject.minutely.icon);
+                //console.log(JsonObject.minutely.data.length);
                 for(var i=0;i<JsonObject.minutely.data.length;i++){
                     arrMinutelyData.push(new MinuteData(JsonObject.minutely.data[i].time, JsonObject.minutely.data[i].precipIntensity,JsonObject.minutely.data[i].precipProbability));
                 }
             }
             function getCurrently(JsonObject){
+
+             //   console.log(JsonObject.currently.time);
+
                 arrCurrently.push(JsonObject.currently.time);
                 arrCurrently.push(JsonObject.currently.summary);
                 arrCurrently.push(JsonObject.currently.icon);
@@ -260,49 +286,9 @@
                 arrCurrently.push(JsonObject.currently.ozon);
              //console.log(arrCurrently[0]);
 
+                return arrCurrently;
+
             }
-
-
-                function pushingData(){
-                    contentAssigned();
-                    dailyAssigned();
-                    loadFirstHours();
-                    clearData();
-                   
-
-                    console.log(arrCurrently[0]);
-                }
-                function contentAssigned(){
-                  //current temperature
-                  //<img src="PNG/clear-day.png" alt="clear day">
-                  $("#dateTime").text(convertingWeekDate(arrCurrently[0]));
-                  $("#state").text(stateInfor);
-                  $("#current_temp").text(arrCurrently[7]);
-                  //$("#curr_icon").text(arrCurrently[2]);
-                  //var imgText= "<img src=PNG/"+arrCurrently[2]+".png alt=\"clear day\"+>";
-                  $("#curr_icon").prepend($("<img>",{src: "PNG/"+arrCurrently[2]+".png", alt:"asd"}));
-                  $("#curr_lettter").text("Precipitation:\n"+arrCurrently[5]);
-                  $("#curr_wind").text("Wind:\n" + arrCurrently[12]+" mph");
-                  //weather, tempmax, tempmin, icon
-                }
-
-                function dailyAssigned(){
-                    var days= $("#listingDays");
-                    for(var i=0;i<7;i++){
-                        var container= $("<div>").addClass("p-2").appendTo(days);
-                       // var weekDay = $("<p></p>").text("WD");
-                        var temp = $("<p></p>").text(convertingWeekDate(arrDailyData[i].time));
-                        var icon = $("<p></p>").prepend($("<img>",{src: "PNG/"+arrDailyData[i].icon+".png", alt:"weather_icon"}));
-                        
-                        //append to p-2
-                        temp.appendTo(container);
-                        icon.appendTo(container);
-                        // append to listingDays
-                        container.appendTo(days);
-                    }
-                }
-
-
             </script>
 <!-- Ending Search button -->
     </head>
@@ -341,8 +327,7 @@
                 <div>
                     <!-- date in details -->
                     <div class="date_details">
-                        <p id="dateTime"></p>
-                        <p id="state"></p>
+                        <p id="dateTime">date in details</p>
                     </div>
                     <!-- ending date in details -->
                     <div class="row">

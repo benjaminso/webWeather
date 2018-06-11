@@ -1,0 +1,27 @@
+<html>
+
+<head>
+        <meta charset="utf-8"/>
+<title></title>
+<script>
+var requestURL = "https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/5fb5fcf58be45931de76fa82a184518f/38.830507,-77.196149" ;
+        
+       
+
+        async function getwithAsyn(){
+            try{
+                const data = await fetch(requestURL);
+                //const jsondata=await data.json();
+               console.log(await data.json());
+            }catch(e){
+                console.log(e,"fail");
+            }
+        }
+
+        getwithAsyn();
+
+</script>
+</head>
+<body>
+</body>
+</html>
